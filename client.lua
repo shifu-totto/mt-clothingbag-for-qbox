@@ -1,92 +1,105 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local bagObject = nil
 
-RegisterNetEvent('mt-clothingbag:client:openBag', function()
-    QBCore.Functions.Progressbar('name_here', 'PUTTING BAG ON FLOOR...', 2000, false, true, {
-        disableMovement = true,
-        disableCarMovement = true,
-        disableMouse = false,
-        disableCombat = true,
-    }, {
-        animDict = 'random@domestic',
-        anim = 'pickup_low',
-        flags = 16,
-    }, {}, {}, function()
-        ClearPedTasks(PlayerPedId())
-        TriggerEvent('mt-clothingbag:client:spawnBag')
-    end)
-end)
+exports('useClothingBag', function(data, slot)
+    if bagObject and DoesEntityExist(bagObject) then
+        lib.notify({
+            type = 'error',
+            description = 'すでに衣装バッグを使用しています'
+        })
+        return
+    end
 
-RegisterNetEvent('mt-clothingbag:client:spawnBag', function()
-    local playerPed = PlayerPedId()
-    local coords    = GetEntityCoords(playerPed)
-    local forward   = GetEntityForwardVector(playerPed)
-    local x, y, z   = table.unpack(coords + forward * 1.0)
+    
+    local success = lib.progressBar({
+        duration = 2000,
+        label = 'バッグを地面に置いています...',
+        useWhileDead = false,
+        canCancel = false,
+        disable = {
+            move = true,
+            car = true,
+            combat = true
+        },
+        anim = {
+            dict = 'random@domestic',
+            clip = 'pickup_low'
+        }
+    })
+
+    if not success then
+        return
+    end
+
+    local ped = PlayerPedId()
+    local coords = GetEntityCoords(ped)
+    local forward = GetEntityForwardVector(ped)
+    local position = coords + forward * 1.0
 
     local model = `prop_big_bag_01`
-    RequestModel(model)
-    while (not HasModelLoaded(model)) do
-        Wait(1)
+
+    lib.requestModel(model)
+
+    bagObject = CreateObject(
+        model,
+        position.x,
+        position.y,
+        position.z,
+        false,
+        false,
+        false
+    )
+
+    PlaceObjectOnGroundProperly(bagObject)
+    SetEntityAsMissionEntity(bagObject, true, true)
+
+    
+    success = lib.progressBar({
+        duration = 3000,
+        label = 'バッグを開いています...',
+        useWhileDead = false,
+        canCancel = false,
+        disable = {
+            move = true,
+            car = true,
+            combat = true
+        },
+        anim = {
+            dict = 'anim@amb@clubhouse@tutorial@bkr_tut_ig3@',
+            clip = 'machinic_loop_mechandplayer'
+        }
+    })
+
+    if not success then
+        return
     end
-    local obj = CreateObject(model, x, y, z, true, false, true)
-    PlaceObjectOnGroundProperly(obj)
-    SetEntityAsMissionEntity(obj)
 
-    Wait(500)
+    TriggerEvent('illenium-appearance:client:openClothingShopMenu', false)
 
-    TriggerEvent('mt-clothingbag:client:openBag2', obj)
-end)
+    success = lib.progressBar({
+        duration = 2000,
+        label = 'バッグを回収しています...',
+        useWhileDead = false,
+        canCancel = false,
+        disable = {
+            move = true,
+            car = true,
+            combat = true
+        },
+        anim = {
+            dict = 'random@domestic',
+            clip = 'pickup_low'
+        }
+    })
 
-RegisterNetEvent('mt-clothingbag:client:openBag2', function(obj)
-    QBCore.Functions.Progressbar('name_here', 'OPENING BAG...', 5000, false, true, {
-        disableMovement = true,
-        disableCarMovement = true,
-        disableMouse = false,
-        disableCombat = true,
-    }, {
-        animDict = 'anim@amb@clubhouse@tutorial@bkr_tut_ig3@',
-        anim = 'machinic_loop_mechandplayer',
-        flags = 16,
-    }, {}, {}, function()
-        ClearPedTasks(PlayerPedId())
-        TriggerEvent('mt-clothingbag:client:progressDespawnBag', obj)
-    end)
-end)
+    if not success then
+        return
+    end
 
-RegisterNetEvent('mt-clothing:client:openMenu', function()
-    TriggerEvent('qb-clothing:client:openOutfitMenu')
-end)
+    if bagObject and DoesEntityExist(bagObject) then
+        DeleteEntity(bagObject)
+    end
 
-RegisterNetEvent('mt-clothingbag:client:progressDespawnBag', function(obj)
-    QBCore.Functions.Progressbar('taking_cloth', 'TAKING CLOTHES FROM BAG...', 2000, false, true, {
-        disableMovement = true,
-        disableCarMovement = true,
-        disableMouse = false,
-        disableCombat = true,
-    }, {
-        animDict = 'random@domestic',
-        anim = 'pickup_low',
-        flags = 16,
-    }, {}, {}, function()
+    bagObject = nil
 
-        Wait(500)
-
-        QBCore.Functions.Progressbar('picking_bag', 'PICKING UP BAG...', 2000, false, true, {
-            disableMovement = true,
-            disableCarMovement = true,
-            disableMouse = false,
-            disableCombat = true,
-        }, {
-            animDict = 'random@domestic',
-            anim = 'pickup_low',
-            flags = 16,
-        }, {}, {}, function()
-            TriggerEvent('mt-clothingbag:client:despawnBag', obj)
-        end)
-    end)
-end)
-
-RegisterNetEvent('mt-clothingbag:client:despawnBag', function(obj)
-    DeleteObject(obj)
     TriggerServerEvent('mt-clothingbag:server:removeBag')
-    TriggerEvent('mt-clothing:client:openMenu')
 end)

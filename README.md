@@ -1,20 +1,34 @@
-# mt-clothingbag
-Simple clothing bag script for QBCore
+# Discription (JP bellow)
+its fork from mt-clothing and adaoted for QBox
+original and respect here https://github.com/MT-Scripts/mt-clothingbag
+By using this item, you can change clothes anywhere.
 
-# Preview:
-https://youtu.be/lIg6__1r8Jw
+mt-clothingのフォークです
+QBcore環境で動作していたスクリプトをQboxで動作するようにしました。
+アイテムを使用するとで、どこでも着替えができるようになります。
+
+# mt-clothingbag
+Simple clothing bag script for QBox
 
 # Instalation:
-Add image for qb-inventory/html/images
+1. Add image for [ox]/ox_inventory/web/images from mt-clothingbag/inventory_images
 
-Add this to your qb-core/shared/items.lua:
+2. Add bellow [ox]/ox_inventory/data/items.lua
+
 ```
-	-- mt-clothingbag
-	["clothing_bag"]  	= {["name"] = "clothing_bag", 			["label"] = "Clothing Bag", 								["weight"] = 100, 		["type"] = "item", 			["image"] = "clothing_bag.png", 				["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,    ["combinable"] = nil,   ["description"] = ""},
+['clothing_bag'] = {
+    label = 'Clothing Bag',
+    weight = 10,
+    stack = false,
+    close = true,
+    description = 'Portable clothing bag',
+
+    client = {
+        export = 'mt-clothingbag.useClothingBag'
+    }
+},
 
 ```
 
 # Dependicies
-- qb-core - https://github.com/qbcore-framework/qb-core
-- qb-clothing - https://github.com/qbcore-framework/qb-core (can be replaced to fivem-appearance)
-- fivem-appearance - https://github.com/iLLeniumStudios/fivem-appearance (can be replaced to qb-clothing)
+- (qbx_core)[https://github.com/Qbox-project/qbx_core]
