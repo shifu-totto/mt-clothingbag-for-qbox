@@ -1,4 +1,4 @@
-# Discription (JP bellow)
+# Discription (JP below)
 its fork from mt-clothing and adaoted for QBox
 original and respect here https://github.com/MT-Scripts/mt-clothingbag
 By using this item, you can change clothes anywhere.
