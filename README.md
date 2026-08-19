@@ -12,8 +12,9 @@ Simple clothing bag script for QBox
 
 # Instalation:
 1. Add image for [ox]/ox_inventory/web/images from mt-clothingbag/inventory_images
-
+mt-clothingbag/inventory_imagesの画像を[ox]/ox_inventory/web/imagesに入れる
 2. Add bellow [ox]/ox_inventory/data/items.lua
+下記アイテムのコードを[ox]/ox_inventory/data/items.luaに追記する
 
 ```
 ['clothing_bag'] = {
